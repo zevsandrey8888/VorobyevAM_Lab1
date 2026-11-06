@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="VorobyevAM_Lab1/VorobyevAM_Lab1.vcxproj" Id="27bdbd58-03ea-4eea-af75-1b116a100998" />
+</Solution>
