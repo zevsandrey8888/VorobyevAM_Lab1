@@ -2,7 +2,16 @@
 #include <fstream>
 #include <string>
 using namespace std;
-
+template <typename T>
+T correctnumber(double min, double max) {
+    T tipe;
+    while (cin.peek() == '+' || !(cin >> tipe) || cin.peek() != '\n' || tipe < min || tipe > max) {
+        cout << "enter the correct value:";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+    return tipe;
+}
 struct pipe
 {
     string name;
@@ -18,32 +27,28 @@ struct cs {
     char classcs;
 };
 
-pipe cinpipe() {
-    pipe p;
+void cinpipe(pipe& p){
     cout << "\n add pipe \n";
     cout << "name:  ";
-    cin >> p.name;
+    getline(cin >> ws, p.name);
     cout << "length(double)  ";
-    cin >> p.length;
+    p.length = correctnumber<double>(0, 10000);;
     cout << "diametr(int)  ";
-    cin >> p.diametr;
+    p.diametr = correctnumber<int>(0, 10000);;
     cout << "station working? (1-YES, 0 - NO)  ";
-    cin >> p.work;
-    return p;
+    p.work = correctnumber<bool>(0, 10000);;
 }
 
-cs cincs() {
-    cs c;
+void cincs(cs& c) {
     cout << "\n add cs:\n";
     cout << "name:  ";
-    cin >> c.name;
+    getline(cin >> ws, c.name);
     cout << "number of stations(int):  ";
-    cin >> c.workshop;
+    c.workshop = correctnumber<int>(0, 10000);
     cout << "number of workstations(int):  ";
-    cin >> c.workshop_work;
+    c.workshop_work = correctnumber<int>(0, c.workshop);;
     cout << "station class(char):  ";
-    cin >> c.classcs;
-    return c;
+    c.classcs = correctnumber<char>(0, 10000);;
 }
 
 void printpipe(const pipe& p) {
@@ -83,7 +88,7 @@ void printcs(const cs& c) {
 void editpipe(pipe& p) {
     if (p.name != "") {
         cout << "\nchange in the operating condition of the pipe:" << "\nenter whether the pipe is working(1-yes, 0-no):";
-        cin >> p.work;
+        p.work = correctnumber<bool>(0,1);
     }
     else {
         cout << "\nenter the pipe\n" << endl;
@@ -93,7 +98,7 @@ void editpipe(pipe& p) {
 void editcs(cs& c) {
     if (c.name != "") {
         cout << "\nchange in the number of operating stations" << "\nnumber of workstations(int):";
-        cin >> c.workshop_work;
+        c.workshop_work = correctnumber<int>(0, c.workshop);
     }
     else {
         cout << "\nenter the cs\n" << endl;
@@ -106,18 +111,15 @@ void saveobj(const pipe& p, const cs& c) {
     if (fout.is_open()) {
 
         if (p.name != "") {
-            fout << "Pipe:" << endl;
-            fout << p.name << endl;
-            fout << p.length << endl;
-            fout << p.diametr << endl;
-            fout << p.work << endl;
+            fout << "Pipe:" << endl << p.name << endl
+            << p.length <<endl << p.diametr << endl << p.work << endl;
         }
         else {
             fout << "first, enter the pipe data" << endl;
         }
 
         if (c.name != "") {
-            fout << "cs:" << endl;
+            fout << "Cs:" << endl;
             fout << c.name << endl;
             fout << c.workshop << endl;
             fout << c.workshop_work << endl;
@@ -135,8 +137,7 @@ void saveobj(const pipe& p, const cs& c) {
     }
 }
 
-pipe loadpipe() {
-    pipe p;
+void loadpipe(pipe& p) {
     ifstream fin;
     fin.open("data.txt", ios::in);
     if (fin.is_open()) {
@@ -152,17 +153,15 @@ pipe loadpipe() {
         }
         fin.close();
     }
-    return p;
 }
 
-cs loadcs() {
-    cs c;
+void loadcs(cs& c) {
     ifstream fin;
     fin.open("data.txt", ios::in);
     if (fin.is_open()) {
         string x;
         while (getline(fin, x)) {
-            if (x == "cs:") {
+            if (x == "Cs:") {
                 getline(fin, c.name);
                 fin >> c.workshop;       fin.ignore();
                 fin >> c.workshop_work;  fin.ignore();
@@ -172,26 +171,23 @@ cs loadcs() {
         }
         fin.close();
     }
-    return c;
 }
 
 int main()
 {
-    string textmenu = "\n 1. add pipe\n 2. add cs\n 3. view all objects\n 4. edit pipe\n 5. edit cs\n 6. save\n 7. upload\n 0. exit\n";
     bool q = true;
     pipe p;
     cs c;
     while (q) {
-        cout << textmenu;
-        int y;
-        cin >> y;
+        cout << "\n 1. add pipe\n 2. add cs\n 3. view all objects\n 4. edit pipe\n 5. edit cs\n 6. save\n 7. upload\n 0. exit\n";
+        int y = correctnumber<int>(0, 7);
         switch (y) {
             case 1: {
-                p = cinpipe();
+                cinpipe(p);
                 break;
             }
             case 2: {
-                c = cincs();
+                cincs(c);
                 break;
             }
             case 3: {
@@ -213,8 +209,8 @@ int main()
                 break;
             }
             case 7: {
-                p = loadpipe();
-                c = loadcs();
+                loadpipe(p);
+                loadcs(c);
                 cout << "\nloaded\n";
                 break;
             }
