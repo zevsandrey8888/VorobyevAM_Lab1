@@ -1,5 +1,6 @@
 ﻿#include <iostream>
-
+#include <fstream>
+#include <string>
 using namespace std;
 
 struct pipe
@@ -45,13 +46,13 @@ cs cincs() {
     return c;
 }
 
-void printpipe(pipe p) {
+void printpipe(const pipe& p) {
     cout << "\nPIPES:\n";
     if (p.name != "") {
         cout << "\nname:  " << p.name;
         cout << "\nlength  " << p.length;
         cout << "\ndiametr  " << p.diametr;
-        if (p.work = true) {
+        if (p.work == true) {
             cout << "\npipe work\n  ";
         }
         else {
@@ -61,10 +62,11 @@ void printpipe(pipe p) {
     else {
         cout << "\nenter the pipe\n  ";
     }
-    
+
 }
 
-void printcs(cs c) {
+
+void printcs(const cs& c) {
     cout << "\nCSS:\n";
     if (c.name != "") {
         cout << "\nname:  " << c.name;
@@ -78,11 +80,99 @@ void printcs(cs c) {
     
 }
 
-void editpipe(pipe p) {
-
+void editpipe(pipe& p) {
+    if (p.name != "") {
+        cout << "\nchange in the operating condition of the pipe:" << "\nenter whether the pipe is working(1-yes, 0-no):";
+        cin >> p.work;
+    }
+    else {
+        cout << "\nenter the pipe\n" << endl;
+    }
 }
-void editcs(cs c) {
 
+void editcs(cs& c) {
+    if (c.name != "") {
+        cout << "\nchange in the number of operating stations" << "\nnumber of workstations(int):";
+        cin >> c.workshop_work;
+    }
+    else {
+        cout << "\nenter the cs\n" << endl;
+    }
+}
+
+void saveobj(const pipe& p, const cs& c) {
+    ofstream fout;
+    fout.open("data.txt", ios::out);
+    if (fout.is_open()) {
+
+        if (p.name != "") {
+            fout << "Pipe:" << endl;
+            fout << p.name << endl;
+            fout << p.length << endl;
+            fout << p.diametr << endl;
+            fout << p.work << endl;
+        }
+        else {
+            fout << "first, enter the pipe data" << endl;
+        }
+
+        if (c.name != "") {
+            fout << "cs:" << endl;
+            fout << c.name << endl;
+            fout << c.workshop << endl;
+            fout << c.workshop_work << endl;
+            fout << c.classcs << endl;
+        }
+        else {
+            fout << "first, enter the cs data" << endl;
+        }
+
+        fout.close();
+        cout << "\nsaved\n";
+    }
+    else {
+        cout << "\ncan not open file\n";
+    }
+}
+
+pipe loadpipe() {
+    pipe p;
+    ifstream fin;
+    fin.open("data.txt", ios::in);
+    if (fin.is_open()) {
+        string x;
+        while (getline(fin, x)) {
+            if (x == "Pipe:") {
+                getline(fin, p.name);
+                fin >> p.length;     fin.ignore();
+                fin >> p.diametr;    fin.ignore();
+                fin >> p.work;       fin.ignore();
+                break;
+            }
+        }
+        fin.close();
+    }
+    return p;
+}
+
+cs loadcs() {
+    cs c;
+    ifstream fin;
+    fin.open("data.txt", ios::in);
+    if (fin.is_open()) {
+        string x;
+        while (getline(fin, x)) {
+            if (x == "cs:") {
+                getline(fin, c.name);
+                fin >> c.workshop;       fin.ignore();
+                fin >> c.workshop_work;  fin.ignore();
+                fin >> c.classcs;        fin.ignore();
+                break;
+            }
+        }
+        fin.close();
+    }
+    return c;
 }
 
 int main()
@@ -111,15 +201,21 @@ int main()
                 break;
             }
             case 4: {
+                editpipe(p);
                 break;
             }
             case 5: {
+                editcs(c);
                 break;
             }
             case 6: {
+                saveobj(p,c);
                 break;
             }
             case 7: {
+                p = loadpipe();
+                c = loadcs();
+                cout << "\nloaded\n";
                 break;
             }
             case 0: {
