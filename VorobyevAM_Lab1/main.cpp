@@ -2,33 +2,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "pipe.h"
+#include "cs.h"
+#include "utils.h"
 using namespace std;
-
-template <typename T>
-T correctnumber(double min, double max) {
-    T tipe;
-    while (cin.peek() == '+' || !(cin >> tipe) || cin.peek() != '\n' || tipe < min || tipe > max) {
-        cout << "enter the correct value:";
-        cin.clear();
-        cin.ignore(10000, '\n');
-    }
-    return tipe;
-}
-
-struct pipe
-{
-    string name;
-    double length;
-    int diametr;
-    bool work;
-};
-
-struct cs {
-    string name;
-    int workshop;
-    int workshop_work;
-    char classcs;
-};
 
 void editpipe(pipe& p) {
     if (p.name != "") {
@@ -83,7 +60,7 @@ void loadpipes(istream& in, vector<pipe>& pipes) {
 
             for (size_t i = 0; i < count; ++i) {
                 pipe p;
-                getline(in, p.name);
+                std::getline(in, p.name);
                 in >> p.length;   in.ignore();
                 in >> p.diametr;  in.ignore();
                 in >> p.work;     in.ignore();
@@ -107,7 +84,7 @@ void loadcss(istream& in, vector<cs>& css) {
 
             for (size_t i = 0; i < count; ++i) {
                 cs c;
-                getline(in, c.name);
+                std::getline(in, c.name);
                 in >> c.workshop;       in.ignore();
                 in >> c.workshop_work;  in.ignore();
                 in >> c.classcs;        in.ignore();
@@ -118,65 +95,17 @@ void loadcss(istream& in, vector<cs>& css) {
     }
 }
 
-istream& operator >> (istream& in, pipe& p) {
-    cout << "\n add pipe: \n";
-    cout << "name:  ";
-    getline(cin >> ws, p.name);
-    cout << "length(double)  ";
-    p.length = correctnumber<double>(0, 10000);
-    cout << "diametr(int)  ";
-    p.diametr = correctnumber<int>(0, 10000);
-    cout << "station working? (1-YES, 0 - NO)  ";
-    p.work = correctnumber<bool>(0, 1);
-    return in;
-}
 
-istream& operator >> (istream& in, cs& c) {
-    cout << "\n add cs:\n";
-    cout << "name:  ";
-    getline(cin >> ws, c.name);
-    cout << "number of stations(int):  ";
-    c.workshop = correctnumber<int>(0, 10000);
-    cout << "number of workstations(int):  ";
-    c.workshop_work = correctnumber<int>(0, c.workshop);
-    cout << "station class(char):  ";
-    c.classcs = correctnumber<char>(0, 10000);
-    return in;
-}
 
-ostream& operator << (ostream& out, const pipe& p) {
-    if (p.name != "") {
-        out << "\nname:  " << p.name;
-        out << "\nlength:  " << p.length;
-        out << "\ndiametr:  " << p.diametr;
-        out << "\npipe: " << (p.work ? "work" : "dont work") << endl;
-    }
-    else {
-        out << "\nenter the pipe\n  ";
-    }
-    return out;
-}
 
-ostream& operator << (ostream& out, const cs& c) {
-    if (c.name != "") {
-        out << "\nname:  " << c.name;
-        out << "\nnumber of stations:  " << c.workshop;
-        out << "\nnumber of workstations:  " << c.workshop_work;
-        out << "\nstation class(char):  " << c.classcs <<endl;
-    }
-    else {
-        out << "\nenter the cs\n" << endl;
-    }
-    return out;
-}
 
 pipe& selectpipe(vector<pipe>& p) {
-    unsigned int index = correctnumber<unsigned int>(1u, p.size());
+    unsigned int index = correctnumber<unsigned int>(1u, static_cast<unsigned int>(p.size()));
     return p[index - 1];
 }
 
 cs& selectcs(vector<cs>& css) {
-    unsigned int index = correctnumber<unsigned int>(1u, css.size());
+    unsigned int index = correctnumber<unsigned int>(1u, static_cast<unsigned int>(css.size()));
     return css[index - 1];
 }
 
